@@ -10,7 +10,8 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://39.105.167.131:3306/smile_boot?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=true
+    url: jdbc:mysql://39.105.167.131:3306/smile_boot?serverTimezone=UTC&useUnicode=true
+        &characterEncoding=utf-8&useSSL=true
     username: root
     password: 
 
@@ -28,8 +29,8 @@ create：每次加载 Hibernate 时都会删除上一次生成的表，然后根
     这就是导致数据库表数据丢失的一个重要原因。
 create-drop：每次加载 Hibernate 时根据 model 类生成表，但是 sessionFactory 一关闭，表就自动删除。
 update：最常用的属性，第一次加载 Hibernate 时根据 model 类会自动建立起表的结构（前提是先建立好数据库），
-    以后加载 Hibernate 时根据 model 类自动更新表结构，即使表结构改变了，但表中的行仍然存在，不会删除以前的行。要注意的是当部署到服务器后，
-    表结构是不会被马上建立起来的，是要等应用第一次运行起来后才会。
+    以后加载 Hibernate 时根据 model 类自动更新表结构，即使表结构改变了，但表中的行仍然存在，不会删除以前的行。
+    要注意的是当部署到服务器后，表结构是不会被马上建立起来的，是要等应用第一次运行起来后才会。
 validate ：每次加载 Hibernate 时，验证创建数据库表结构，只会和数据库中的表进行比较，不会创建新表，但是会插入新值。
 ```
 ### 3、新建bean
@@ -62,3 +63,24 @@ public class User{
 @Enumerated 可选，使用枚举的时候，我们希望数据库中存储的是枚举对应的 String 类型，而不是枚举的索引值，
     需要在属性上面添加 @Enumerated(EnumType.STRING) 注解。
 ```
+### 4、新建Repository
+```
+public interface UserRepository extends JpaRepository<User,Long> {
+
+    User findUserByName(String name);
+
+}
+```
+### 5、测试
+```
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class UserRepositoryTest {
+
+    @Resource
+    UserRepository userRepository;
+    
+    System.out.println(userRepository.findUserByName("test"));
+}
+```
+
